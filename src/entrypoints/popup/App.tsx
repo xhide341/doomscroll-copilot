@@ -5,9 +5,15 @@ import {
   DEFAULT_TELEMETRY,
   type AutoPilotSettings,
   type MetricsData,
+  type PlatformType,
   type TelemetryData,
 } from '../../types/settings';
-import { metricsItem, settingsItem, telemetryItem } from '../../utils/storage';
+import {
+  metricsItem,
+  settingsItem,
+  tiktokTelemetryItem,
+  youtubeTelemetryItem,
+} from '../../utils/storage';
 import { Header } from './components/Header';
 import { KeywordBank } from './components/KeywordBank';
 import { LiveMonitor } from './components/LiveMonitor';
@@ -18,29 +24,47 @@ export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('live');
   const [settings, setSettings] = useState<AutoPilotSettings>(DEFAULT_SETTINGS);
   const [metrics, setMetrics] = useState<MetricsData>(DEFAULT_METRICS);
-  const [telemetry, setTelemetry] = useState<TelemetryData>(DEFAULT_TELEMETRY);
+  const [selectedPlatform, setSelectedPlatform] =
+    useState<PlatformType>('idle');
+  const [tiktokTelemetry, setTiktokTelemetry] = useState<TelemetryData>({
+    ...DEFAULT_TELEMETRY,
+    platform: 'tiktok',
+  });
+  const [youtubeTelemetry, setYoutubeTelemetry] = useState<TelemetryData>({
+    ...DEFAULT_TELEMETRY,
+    platform: 'youtube',
+  });
 
   useEffect(() => {
-    // Initial fetch from WXT storage
+    // 1. Initial fetch from storage
     settingsItem.getValue().then(setSettings);
     metricsItem.getValue().then(setMetrics);
-    telemetryItem.getValue().then(setTelemetry);
+    tiktokTelemetryItem.getValue().then(setTiktokTelemetry);
+    youtubeTelemetryItem.getValue().then(setYoutubeTelemetry);
 
-    // Watch for real-time updates across popup, background, and content scripts
-    const unwatchSettings = settingsItem.watch((newVal) => {
-      setSettings(newVal);
-    });
-    const unwatchMetrics = metricsItem.watch((newVal) => {
-      setMetrics(newVal);
-    });
-    const unwatchTelemetry = telemetryItem.watch((newVal) => {
-      setTelemetry(newVal);
-    });
+    // 2. Query active browser tab to automatically lock onto the current platform
+    if (typeof chrome !== 'undefined' && chrome.tabs?.query) {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const url = tabs[0]?.url || '';
+        if (url.includes('tiktok.com')) {
+          setSelectedPlatform('tiktok');
+        } else if (url.includes('youtube.com')) {
+          setSelectedPlatform('youtube');
+        }
+      });
+    }
+
+    // 3. Watch for real-time updates across popup and isolated platform content scripts
+    const unwatchSettings = settingsItem.watch(setSettings);
+    const unwatchMetrics = metricsItem.watch(setMetrics);
+    const unwatchTiktok = tiktokTelemetryItem.watch(setTiktokTelemetry);
+    const unwatchYoutube = youtubeTelemetryItem.watch(setYoutubeTelemetry);
 
     return () => {
       unwatchSettings();
       unwatchMetrics();
-      unwatchTelemetry();
+      unwatchTiktok();
+      unwatchYoutube();
     };
   }, []);
 
@@ -52,11 +76,39 @@ export const App: React.FC = () => {
     });
   };
 
+  const hasTiktok = tiktokTelemetry.action !== 'idle';
+  const hasYoutube = youtubeTelemetry.action !== 'idle';
+
+  // Determine active display platform based on current browser tab or active feeds
+  const activeDisplayPlatform: PlatformType =
+    selectedPlatform !== 'idle'
+      ? selectedPlatform
+      : hasTiktok && !hasYoutube
+        ? 'tiktok'
+        : hasYoutube && !hasTiktok
+          ? 'youtube'
+          : hasTiktok
+            ? 'tiktok'
+            : hasYoutube
+              ? 'youtube'
+              : 'idle';
+
+  const telemetry: TelemetryData =
+    activeDisplayPlatform === 'tiktok'
+      ? tiktokTelemetry
+      : activeDisplayPlatform === 'youtube'
+        ? youtubeTelemetry
+        : DEFAULT_TELEMETRY;
+
   return (
-    <div className="flex flex-col min-h-[540px] max-h-[600px] w-[380px] bg-zinc-950 text-zinc-100 select-none">
+    <div className="flex max-h-[600px] min-h-[540px] w-[380px] flex-col bg-zinc-950 text-zinc-100 select-none">
       <Header
-        platform={telemetry.platform}
+        platform={activeDisplayPlatform}
         isActive={settings.masterEnabled && telemetry.platform !== 'idle'}
+        selectedPlatform={activeDisplayPlatform}
+        onSelectPlatform={setSelectedPlatform}
+        hasTiktok={hasTiktok}
+        hasYoutube={hasYoutube}
       />
       <Navigation currentTab={activeTab} onTabChange={setActiveTab} />
 

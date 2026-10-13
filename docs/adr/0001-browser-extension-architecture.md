@@ -8,9 +8,10 @@ Accepted
 
 ## Context
 
-For the wackathon project, we need automated scrolling and liking on YouTube Shorts, Instagram Reels, and TikTok, along with content evaluation (e.g. detecting "baddies" to auto-like). 
+For the wackathon project, we need automated scrolling and liking on YouTube Shorts, Instagram Reels, and TikTok, along with content evaluation (e.g. detecting "baddies" to auto-like).
 
 We considered two architectural alternatives:
+
 1. Headless scraping / backend bot running Puppeteer/Playwright: Requires session cookies or account logins, easily hits IP rate-limits and bot-detection challenges (Cloudflare, Akamai, TikTok captcha).
 2. Chrome/Edge Extension (Manifest V3): Runs directly inside the user's active, authenticated browser tab.
 

@@ -8,9 +8,11 @@ export default defineConfig({
   vite: () => ({
     plugins: [tailwindcss()],
   }),
-  manifest : {   permissions: ['storage'],},
+  manifest: {
+    permissions: ['storage', 'tabs'],
+    host_permissions: ['*://*.tiktok.com/*', '*://*.youtube.com/*'],
+  },
   webExt: {
     disabled: true,
   },
 });
-

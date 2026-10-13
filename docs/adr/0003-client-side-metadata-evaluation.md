@@ -11,6 +11,7 @@ Accepted
 To determine whether a short-form video matches the Baddie Target criteria for automated liking and cadence control, we need an evaluation mechanism.
 
 We considered two approaches:
+
 1. **External Remote Service**: Sending extracted metadata to an external server or remote model. This introduces network latency, external hosting/infrastructure costs, and dependency on external service availability during live hackathon demos.
 2. **Client-Side DOM Metadata & Hashtag Engine**: Social media creators on TikTok, Instagram Reels, and YouTube Shorts already aggressively tag their content with explicit hashtags (`#baddie`, `#ootd`, `#fitcheck`, `#grwm`, `#slay`, `#glowup`) and trending audio titles. Processing these in-page provides deterministic, instant results.
 

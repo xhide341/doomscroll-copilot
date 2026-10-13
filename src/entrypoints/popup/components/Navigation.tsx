@@ -7,7 +7,10 @@ interface NavigationProps {
   onTabChange: (tab: TabType) => void;
 }
 
-export const Navigation: React.FC<NavigationProps> = ({ currentTab, onTabChange }) => {
+export const Navigation: React.FC<NavigationProps> = ({
+  currentTab,
+  onTabChange,
+}) => {
   const tabs: { id: TabType; label: string }[] = [
     { id: 'live', label: 'Live Monitor' },
     { id: 'controls', label: 'Target Controls' },
@@ -22,10 +25,10 @@ export const Navigation: React.FC<NavigationProps> = ({ currentTab, onTabChange 
           <button
             key={tab.id}
             onClick={() => onTabChange(tab.id)}
-            className={`flex-1 py-2 text-center text-xs font-medium transition-colors border-b-2 -mb-px cursor-pointer ${
+            className={`-mb-px flex-1 cursor-pointer border-b-2 py-2 text-center text-xs font-medium transition-colors ${
               isActive
-                ? 'border-indigo-500 text-zinc-100 font-semibold'
-                : 'border-transparent text-zinc-400 hover:text-zinc-200 hover:border-zinc-700'
+                ? 'border-indigo-500 font-semibold text-zinc-100'
+                : 'border-transparent text-zinc-400 hover:border-zinc-700 hover:text-zinc-200'
             }`}
           >
             {tab.label}

@@ -6,7 +6,10 @@ interface TargetControlsProps {
   onChange: (updated: Partial<AutoPilotSettings>) => void;
 }
 
-export const TargetControls: React.FC<TargetControlsProps> = ({ settings, onChange }) => {
+export const TargetControls: React.FC<TargetControlsProps> = ({
+  settings,
+  onChange,
+}) => {
   const togglePlatform = (key: keyof AutoPilotSettings['platforms']) => {
     onChange({
       platforms: {
@@ -29,7 +32,7 @@ export const TargetControls: React.FC<TargetControlsProps> = ({ settings, onChan
         <div className="flex items-center justify-between">
           <div>
             <div className="font-semibold text-zinc-100">Master Auto-Pilot</div>
-            <div className="text-[11px] text-zinc-400 mt-0.5">
+            <div className="mt-0.5 text-[11px] text-zinc-400">
               Enable automated feed navigation and evaluation
             </div>
           </div>
@@ -53,13 +56,15 @@ export const TargetControls: React.FC<TargetControlsProps> = ({ settings, onChan
       <div className="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/40 p-3">
         <div>
           <div className="font-semibold text-zinc-100">Auto-Like Targets</div>
-          <div className="text-[11px] text-zinc-400 mt-0.5">
+          <div className="mt-0.5 text-[11px] text-zinc-400">
             Automatically click like when score exceeds threshold
           </div>
         </div>
         <button
           type="button"
-          onClick={() => onChange({ autoLikeEnabled: !settings.autoLikeEnabled })}
+          onClick={() =>
+            onChange({ autoLikeEnabled: !settings.autoLikeEnabled })
+          }
           className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
             settings.autoLikeEnabled ? 'bg-indigo-600' : 'bg-zinc-700'
           }`}
@@ -76,9 +81,13 @@ export const TargetControls: React.FC<TargetControlsProps> = ({ settings, onChan
       <div className="space-y-3.5 rounded-lg border border-zinc-800 bg-zinc-900/40 p-3">
         {/* Confidence Threshold */}
         <div className="space-y-1.5">
-          <div className="flex justify-between items-center text-[11px]">
-            <span className="text-zinc-300 font-medium">Confidence Threshold</span>
-            <span className="font-mono text-indigo-400 font-semibold">{settings.confidenceThreshold}%</span>
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="font-medium text-zinc-300">
+              Confidence Threshold
+            </span>
+            <span className="font-mono font-semibold text-indigo-400">
+              {settings.confidenceThreshold}%
+            </span>
           </div>
           <input
             type="range"
@@ -86,8 +95,10 @@ export const TargetControls: React.FC<TargetControlsProps> = ({ settings, onChan
             max="95"
             step="5"
             value={settings.confidenceThreshold}
-            onChange={(e) => onChange({ confidenceThreshold: Number(e.target.value) })}
-            className="w-full cursor-pointer h-1.5 bg-zinc-800 rounded-lg appearance-none"
+            onChange={(e) =>
+              onChange({ confidenceThreshold: Number(e.target.value) })
+            }
+            className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-zinc-800"
           />
           <div className="flex justify-between text-[10px] text-zinc-500">
             <span>Relaxed (10%)</span>
@@ -97,9 +108,13 @@ export const TargetControls: React.FC<TargetControlsProps> = ({ settings, onChan
 
         {/* Dwell Cap */}
         <div className="space-y-1.5">
-          <div className="flex justify-between items-center text-[11px]">
-            <span className="text-zinc-300 font-medium">Dwell Cap (Max Watch Time)</span>
-            <span className="font-mono text-zinc-200 font-semibold">{settings.dwellCap}s</span>
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="font-medium text-zinc-300">
+              Dwell Cap (Max Watch Time)
+            </span>
+            <span className="font-mono font-semibold text-zinc-200">
+              {settings.dwellCap}s
+            </span>
           </div>
           <input
             type="range"
@@ -108,7 +123,7 @@ export const TargetControls: React.FC<TargetControlsProps> = ({ settings, onChan
             step="1"
             value={settings.dwellCap}
             onChange={(e) => onChange({ dwellCap: Number(e.target.value) })}
-            className="w-full cursor-pointer h-1.5 bg-zinc-800 rounded-lg appearance-none"
+            className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-zinc-800"
           />
           <div className="flex justify-between text-[10px] text-zinc-500">
             <span>5s</span>
@@ -118,9 +133,13 @@ export const TargetControls: React.FC<TargetControlsProps> = ({ settings, onChan
 
         {/* Early Skip Delay */}
         <div className="space-y-1.5">
-          <div className="flex justify-between items-center text-[11px]">
-            <span className="text-zinc-300 font-medium">Early Skip Delay (Non-Match)</span>
-            <span className="font-mono text-zinc-200 font-semibold">{settings.earlySkipDelay.toFixed(1)}s</span>
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="font-medium text-zinc-300">
+              Early Skip Delay (Non-Match)
+            </span>
+            <span className="font-mono font-semibold text-zinc-200">
+              {settings.earlySkipDelay.toFixed(1)}s
+            </span>
           </div>
           <input
             type="range"
@@ -128,8 +147,10 @@ export const TargetControls: React.FC<TargetControlsProps> = ({ settings, onChan
             max="5.0"
             step="0.5"
             value={settings.earlySkipDelay}
-            onChange={(e) => onChange({ earlySkipDelay: Number(e.target.value) })}
-            className="w-full cursor-pointer h-1.5 bg-zinc-800 rounded-lg appearance-none"
+            onChange={(e) =>
+              onChange({ earlySkipDelay: Number(e.target.value) })
+            }
+            className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-zinc-800"
           />
           <div className="flex justify-between text-[10px] text-zinc-500">
             <span>1.0s</span>
@@ -139,8 +160,8 @@ export const TargetControls: React.FC<TargetControlsProps> = ({ settings, onChan
       </div>
 
       {/* Target Platforms */}
-      <div className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-3 space-y-2">
-        <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+      <div className="space-y-2 rounded-lg border border-zinc-800 bg-zinc-900/40 p-3">
+        <div className="text-[11px] font-semibold tracking-wider text-zinc-400 uppercase">
           Enabled Platforms
         </div>
         <div className="grid grid-cols-3 gap-2">
@@ -157,7 +178,7 @@ export const TargetControls: React.FC<TargetControlsProps> = ({ settings, onChan
                 key={plat}
                 type="button"
                 onClick={() => togglePlatform(plat)}
-                className={`py-1.5 px-2 rounded border text-center text-[11px] font-medium transition-colors cursor-pointer ${
+                className={`cursor-pointer rounded border px-2 py-1.5 text-center text-[11px] font-medium transition-colors ${
                   isEnabled
                     ? 'border-indigo-500/40 bg-indigo-950/40 text-indigo-300'
                     : 'border-zinc-800 bg-zinc-950 text-zinc-500 hover:text-zinc-400'

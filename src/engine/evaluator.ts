@@ -11,7 +11,7 @@ export interface EvaluationResult {
 
 export function evaluateVideo(
   metadata: VideoMetadata,
-  settings: AutoPilotSettings,
+  settings: AutoPilotSettings
 ): EvaluationResult {
   // If content is an ad / sponsored, instantly disqualify
   if (metadata.isAd) {
@@ -25,7 +25,7 @@ export function evaluateVideo(
   }
 
   const normalizedTags = metadata.hashtags.map((t) =>
-    t.toLowerCase().replace(/^#/, '').trim(),
+    t.toLowerCase().replace(/^#/, '').trim()
   );
 
   const captionWords = metadata.caption

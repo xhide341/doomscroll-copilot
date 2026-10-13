@@ -15,7 +15,9 @@ export class TikTokAdapter implements PlatformAdapter {
    * Finds the active media card (e.g. #media-card-0, #media-card-1) in the viewport.
    */
   getActiveCard(): HTMLElement | null {
-    const cards = Array.from(document.querySelectorAll<HTMLElement>('[id^="media-card-"]'));
+    const cards = Array.from(
+      document.querySelectorAll<HTMLElement>('[id^="media-card-"]')
+    );
     if (cards.length === 0) {
       const now = Date.now();
       if (now - this.lastCardWarnTime > 3000) {
@@ -25,7 +27,7 @@ export class TikTokAdapter implements PlatformAdapter {
           .map((el) => el.id);
         console.warn(
           '[TikTok Detection] ⚠️ No elements matching [id^="media-card-"]. Sample IDs in page:',
-          sampleIds,
+          sampleIds
         );
       }
       return null;
@@ -52,7 +54,7 @@ export class TikTokAdapter implements PlatformAdapter {
       this.lastLoggedCardId = closestCard.id;
       console.log(
         `%c[TikTok Detection] 🎯 Active Card: #${closestCard.id} (out of ${cards.length} cards in DOM)`,
-        'color: #818cf8; font-weight: bold;',
+        'color: #818cf8; font-weight: bold;'
       );
     }
 
@@ -70,12 +72,16 @@ export class TikTokAdapter implements PlatformAdapter {
     }
 
     // 2. Global search: find <video> closest to viewport vertical center
-    const videos = Array.from(document.querySelectorAll<HTMLVideoElement>('video'));
+    const videos = Array.from(
+      document.querySelectorAll<HTMLVideoElement>('video')
+    );
     if (videos.length === 0) {
       const now = Date.now();
       if (now - this.lastVideoWarnTime > 3000) {
         this.lastVideoWarnTime = now;
-        console.warn('[TikTok Detection] ⚠️ No <video> elements found anywhere on page.');
+        console.warn(
+          '[TikTok Detection] ⚠️ No <video> elements found anywhere on page.'
+        );
       }
       return null;
     }
@@ -110,7 +116,7 @@ export class TikTokAdapter implements PlatformAdapter {
     if (!activeVideo) return null;
 
     const container = activeVideo.closest<HTMLElement>(
-      '[id^="media-card-"], [data-e2e="recommend-list-item-container"], [data-e2e="browse-video-item"], [data-e2e="feed-item"]',
+      '[id^="media-card-"], [data-e2e="recommend-list-item-container"], [data-e2e="browse-video-item"], [data-e2e="feed-item"]'
     );
 
     return container ?? activeVideo.parentElement;
@@ -121,18 +127,18 @@ export class TikTokAdapter implements PlatformAdapter {
 
     // Strict data-e2e selectors
     const authorEl = container?.querySelector<HTMLElement>(
-      '[data-e2e="video-author-uniqueid"], [data-e2e="browse-author-uniqueid"]',
+      '[data-e2e="video-author-uniqueid"], [data-e2e="browse-author-uniqueid"]'
     );
     const creatorHandle = authorEl?.textContent?.trim() || '@unknown';
 
     const descEl = container?.querySelector<HTMLElement>(
-      '[data-e2e="video-desc"], [data-e2e="browse-video-desc"]',
+      '[data-e2e="video-desc"], [data-e2e="browse-video-desc"]'
     );
     const caption = descEl?.textContent?.trim() || '';
 
     // Extract hashtags from strict data-e2e tag links or inline text
     const tagElements = container?.querySelectorAll<HTMLElement>(
-      '[data-e2e="search-common-link"], a[data-e2e="video-desc-hashtag"]',
+      '[data-e2e="search-common-link"], a[data-e2e="video-desc-hashtag"]'
     );
     const tags: string[] = [];
 
@@ -164,20 +170,24 @@ export class TikTokAdapter implements PlatformAdapter {
       {
         containerId: container?.id || 'none',
         title: caption || '(empty)',
-        titleElement: descEl ? (descEl.getAttribute('data-e2e') || descEl.className) : 'not found',
+        titleElement: descEl
+          ? descEl.getAttribute('data-e2e') || descEl.className
+          : 'not found',
         hashtags: tags,
         tagCount: tags.length,
         isAd,
-      },
+      }
     );
 
     const musicEl = container?.querySelector<HTMLElement>(
-      '[data-e2e="video-music"], [data-e2e="browse-music-title"]',
+      '[data-e2e="video-music"], [data-e2e="browse-music-title"]'
     );
     const soundTitle = musicEl?.textContent?.trim() || 'Original Sound';
 
     return {
-      creatorHandle: creatorHandle.startsWith('@') ? creatorHandle : `@${creatorHandle}`,
+      creatorHandle: creatorHandle.startsWith('@')
+        ? creatorHandle
+        : `@${creatorHandle}`,
       caption,
       hashtags: tags,
       soundTitle,
@@ -191,7 +201,7 @@ export class TikTokAdapter implements PlatformAdapter {
 
     // 1. Direct check on tags container or overlay bottom content (e.g. DivItemTagsContainer > div > p)
     const adBadge = container.querySelector(
-      '[class*="DivItemTagsContainer"] p, [class*="DivOverlayBottomContent"] p, [data-e2e*="ad"]',
+      '[class*="DivItemTagsContainer"] p, [class*="DivOverlayBottomContent"] p, [data-e2e*="ad"]'
     );
     if (adBadge && /sponsored/i.test(adBadge.textContent || '')) {
       return true;
@@ -201,7 +211,11 @@ export class TikTokAdapter implements PlatformAdapter {
     const textNodes = container.querySelectorAll('p, span, div');
     for (const el of textNodes) {
       const text = el.textContent?.trim().toLowerCase();
-      if (text === 'sponsored' || text === 'promoted' || text === 'paid partnership') {
+      if (
+        text === 'sponsored' ||
+        text === 'promoted' ||
+        text === 'paid partnership'
+      ) {
         return true;
       }
     }
@@ -212,20 +226,25 @@ export class TikTokAdapter implements PlatformAdapter {
   isLiked(): boolean {
     const container = this.getActiveContainer();
     const likeIcon = container?.querySelector<HTMLElement>(
-      '[data-e2e="like-icon"], [data-e2e="browse-like-icon"]',
+      '[data-e2e="like-icon"], [data-e2e="browse-like-icon"]'
     );
     if (!likeIcon) return false;
 
     // TikTok marks liked state with color or filled paths or parent state
     const svg = likeIcon.querySelector('svg');
-    const fill = svg?.getAttribute('fill') || getComputedStyle(svg || likeIcon).color;
-    return fill.includes('254, 44, 85') || fill.includes('rgb(254, 44, 85)') || fill.includes('#fe2c55');
+    const fill =
+      svg?.getAttribute('fill') || getComputedStyle(svg || likeIcon).color;
+    return (
+      fill.includes('254, 44, 85') ||
+      fill.includes('rgb(254, 44, 85)') ||
+      fill.includes('#fe2c55')
+    );
   }
 
   async clickLike(): Promise<boolean> {
     const container = this.getActiveContainer();
     const likeButton = container?.querySelector<HTMLElement>(
-      '[data-e2e="like-icon"], [data-e2e="browse-like-icon"]',
+      '[data-e2e="like-icon"], [data-e2e="browse-like-icon"]'
     );
 
     if (likeButton) {
@@ -251,7 +270,7 @@ export class TikTokAdapter implements PlatformAdapter {
       if (btn) {
         console.log(
           `%c[TikTok Navigation] 🎯 Clicked next video button (${selector})`,
-          'color: #10b981; font-weight: bold;',
+          'color: #10b981; font-weight: bold;'
         );
         btn.click();
         return;
@@ -264,11 +283,13 @@ export class TikTokAdapter implements PlatformAdapter {
       const match = activeCard.id.match(/media-card-(\d+)/);
       if (match && match[1]) {
         const nextIndex = parseInt(match[1], 10) + 1;
-        const nextCard = document.querySelector<HTMLElement>(`#media-card-${nextIndex}`);
+        const nextCard = document.querySelector<HTMLElement>(
+          `#media-card-${nextIndex}`
+        );
         if (nextCard) {
           console.log(
             `%c[TikTok Navigation] 📜 Scrolling to next card: #media-card-${nextIndex}`,
-            'color: #10b981; font-weight: bold;',
+            'color: #10b981; font-weight: bold;'
           );
           nextCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
           return;
@@ -278,7 +299,7 @@ export class TikTokAdapter implements PlatformAdapter {
       if (activeCard.nextElementSibling) {
         console.log(
           '%c[TikTok Navigation] 📜 Scrolling to activeCard.nextElementSibling',
-          'color: #10b981; font-weight: bold;',
+          'color: #10b981; font-weight: bold;'
         );
         activeCard.nextElementSibling.scrollIntoView({
           behavior: 'smooth',
@@ -291,7 +312,7 @@ export class TikTokAdapter implements PlatformAdapter {
     // 3. Fallback: synthetic ArrowDown event
     console.log(
       '%c[TikTok Navigation] ⚠️ Next button/card not found. Dispatched ArrowDown event fallback',
-      'color: #f59e0b; font-weight: bold;',
+      'color: #f59e0b; font-weight: bold;'
     );
     const event = new KeyboardEvent('keydown', {
       key: 'ArrowDown',

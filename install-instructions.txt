@@ -1,0 +1,37 @@
+# How to load the Doomscroll Co‑Pilot extension in Brave
+
+1. **Build the extension** (if you haven’t already):
+   ```bash
+   pnpm build        # creates .output/chrome-mv3 with the unpacked extension
+   ```
+
+2. **Open Brave’s extension page**:
+   - Type `brave://extensions/` in the address bar and press Enter.
+
+3. **Enable Developer mode**:
+   - Toggle the **Developer mode** switch in the top‑right corner.
+
+4. **Load the unpacked extension**:
+   - Click **Load unpacked**.
+   - In the file chooser, navigate to the folder that was just built:
+     ```
+     <your‑project‑root>/.output/chrome-mv3
+     ```
+   - Select that folder and click **Select Folder**.
+
+5. **Grant site access (if needed)**:
+   - The extension may need permission to read TikTok, Instagram, and YouTube pages.
+   - Click the extension’s **Details** button.
+   - Under **Site access**, choose **On click** or **On all sites** (recommended for this demo).
+
+6. **Test it**:
+   - Open TikTok, Instagram Reels, or YouTube Shorts in a new tab.
+   - Click the extension’s toolbar icon (it appears as a small icon near the address bar).
+   - Turn **Auto‑Pilot** ON, enable **Auto‑Like Baddies**, set a confidence threshold, and watch the demo.
+
+**Notes**
+- The generated `manifest.json` already includes the required host permissions for `*://*/*`, so no extra manifest edits should be needed.
+- If the extension doesn’t activate on a specific site, double‑check the **Site access** setting or rebuild after editing `wxt.config.ts` to add explicit `"matches"` patterns.
+- The extension works in any Chromium‑based browser (Chrome, Edge, Brave) because it’s an MV3 unpacked load.
+
+Happy doomscrolling! 🚀

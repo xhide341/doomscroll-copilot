@@ -7,7 +7,10 @@ import {
 interface KeywordBankProps {
   targetKeywords: string[];
   blacklistKeywords: string[];
-  onChange: (updates: { targetKeywords?: string[]; blacklistKeywords?: string[] }) => void;
+  onChange: (updates: {
+    targetKeywords?: string[];
+    blacklistKeywords?: string[];
+  }) => void;
 }
 
 export const KeywordBank: React.FC<KeywordBankProps> = ({
@@ -66,7 +69,7 @@ export const KeywordBank: React.FC<KeywordBankProps> = ({
               Keywords and hashtags that score content positively
             </div>
           </div>
-          <span className="rounded bg-indigo-950/60 border border-indigo-500/30 px-1.5 py-0.5 font-mono text-[10px] text-indigo-300">
+          <span className="rounded border border-indigo-500/30 bg-indigo-950/60 px-1.5 py-0.5 font-mono text-[10px] text-indigo-300">
             {targetKeywords.length}
           </span>
         </div>
@@ -81,13 +84,13 @@ export const KeywordBank: React.FC<KeywordBankProps> = ({
           />
           <button
             type="submit"
-            className="rounded bg-indigo-600 px-3 py-1 font-medium text-white hover:bg-indigo-500 transition-colors cursor-pointer text-xs"
+            className="cursor-pointer rounded bg-indigo-600 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-indigo-500"
           >
             Add
           </button>
         </form>
 
-        <div className="flex flex-wrap gap-1 max-h-24 overflow-y-auto pr-1 pt-1">
+        <div className="flex max-h-24 flex-wrap gap-1 overflow-y-auto pt-1 pr-1">
           {targetKeywords.map((tag) => (
             <span
               key={tag}
@@ -97,7 +100,7 @@ export const KeywordBank: React.FC<KeywordBankProps> = ({
               <button
                 type="button"
                 onClick={() => removeTargetTag(tag)}
-                className="text-zinc-400 hover:text-zinc-100 ml-0.5 cursor-pointer leading-none"
+                className="ml-0.5 cursor-pointer leading-none text-zinc-400 hover:text-zinc-100"
               >
                 ×
               </button>
@@ -115,7 +118,7 @@ export const KeywordBank: React.FC<KeywordBankProps> = ({
               Negative keywords that immediately disqualify content
             </div>
           </div>
-          <span className="rounded bg-rose-950/60 border border-rose-500/30 px-1.5 py-0.5 font-mono text-[10px] text-rose-300">
+          <span className="rounded border border-rose-500/30 bg-rose-950/60 px-1.5 py-0.5 font-mono text-[10px] text-rose-300">
             {blacklistKeywords.length}
           </span>
         </div>
@@ -130,13 +133,13 @@ export const KeywordBank: React.FC<KeywordBankProps> = ({
           />
           <button
             type="submit"
-            className="rounded bg-zinc-800 px-3 py-1 font-medium text-zinc-200 hover:bg-zinc-700 transition-colors cursor-pointer text-xs border border-zinc-700"
+            className="cursor-pointer rounded border border-zinc-700 bg-zinc-800 px-3 py-1 text-xs font-medium text-zinc-200 transition-colors hover:bg-zinc-700"
           >
             Add
           </button>
         </form>
 
-        <div className="flex flex-wrap gap-1 max-h-24 overflow-y-auto pr-1 pt-1">
+        <div className="flex max-h-24 flex-wrap gap-1 overflow-y-auto pt-1 pr-1">
           {blacklistKeywords.map((tag) => (
             <span
               key={tag}
@@ -146,7 +149,7 @@ export const KeywordBank: React.FC<KeywordBankProps> = ({
               <button
                 type="button"
                 onClick={() => removeBlacklistTag(tag)}
-                className="text-zinc-400 hover:text-zinc-100 ml-0.5 cursor-pointer leading-none"
+                className="ml-0.5 cursor-pointer leading-none text-zinc-400 hover:text-zinc-100"
               >
                 ×
               </button>
@@ -160,7 +163,7 @@ export const KeywordBank: React.FC<KeywordBankProps> = ({
         <button
           type="button"
           onClick={resetToDefaults}
-          className="w-full rounded border border-zinc-800 bg-zinc-900/60 py-1.5 text-center text-[11px] font-medium text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-colors cursor-pointer"
+          className="w-full cursor-pointer rounded border border-zinc-800 bg-zinc-900/60 py-1.5 text-center text-[11px] font-medium text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-zinc-200"
         >
           Reset Keyword Banks to Default
         </button>

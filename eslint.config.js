@@ -17,5 +17,5 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
     },
   },
-  prettier,
+  prettier
 );

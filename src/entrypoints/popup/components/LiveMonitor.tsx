@@ -7,35 +7,40 @@ interface LiveMonitorProps {
   threshold: number;
 }
 
-export const LiveMonitor: React.FC<LiveMonitorProps> = ({ telemetry, metrics, threshold }) => {
+export const LiveMonitor: React.FC<LiveMonitorProps> = ({
+  telemetry,
+  metrics,
+  threshold,
+}) => {
   const isMatch = telemetry.score >= threshold && telemetry.score > 0;
-  const likeRate = metrics.scrolledCount > 0
-    ? Math.round((metrics.likedCount / metrics.scrolledCount) * 100)
-    : 0;
+  const likeRate =
+    metrics.scrolledCount > 0
+      ? Math.round((metrics.likedCount / metrics.scrolledCount) * 100)
+      : 0;
 
   const getActionBadge = () => {
     switch (telemetry.action) {
       case 'liked':
         return (
-          <span className="inline-flex items-center gap-1 rounded bg-rose-950/40 border border-rose-500/30 px-2 py-0.5 text-[10px] font-medium text-rose-300">
+          <span className="inline-flex items-center gap-1 rounded border border-rose-500/30 bg-rose-950/40 px-2 py-0.5 text-[10px] font-medium text-rose-300">
             <span>❤️</span> Auto-Liked
           </span>
         );
       case 'skipping':
         return (
-          <span className="inline-flex items-center gap-1 rounded bg-amber-950/40 border border-amber-500/30 px-2 py-0.5 text-[10px] font-medium text-amber-300">
+          <span className="inline-flex items-center gap-1 rounded border border-amber-500/30 bg-amber-950/40 px-2 py-0.5 text-[10px] font-medium text-amber-300">
             <span>⏩</span> Early Skip
           </span>
         );
       case 'watching':
         return (
-          <span className="inline-flex items-center gap-1 rounded bg-indigo-950/40 border border-indigo-500/30 px-2 py-0.5 text-[10px] font-medium text-indigo-300">
+          <span className="inline-flex items-center gap-1 rounded border border-indigo-500/30 bg-indigo-950/40 px-2 py-0.5 text-[10px] font-medium text-indigo-300">
             <span>👀</span> Watching
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1 rounded bg-zinc-900 border border-zinc-800 px-2 py-0.5 text-[10px] font-medium text-zinc-400">
+          <span className="inline-flex items-center gap-1 rounded border border-zinc-800 bg-zinc-900 px-2 py-0.5 text-[10px] font-medium text-zinc-400">
             Idle
           </span>
         );
@@ -45,14 +50,20 @@ export const LiveMonitor: React.FC<LiveMonitorProps> = ({ telemetry, metrics, th
   return (
     <div className="space-y-3 p-4">
       {/* Real-Time Telemetry Card */}
-      <div className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-3.5 space-y-3">
+      <div className="space-y-3 rounded-lg border border-zinc-800 bg-zinc-900/60 p-3.5">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-100 truncate">
+            <div className="flex items-center gap-1.5 truncate text-xs font-semibold text-zinc-100">
               <span>{telemetry.creator}</span>
             </div>
-            <div className="flex items-center gap-1 text-[11px] text-zinc-400 truncate mt-0.5">
-              <svg className="h-3 w-3 shrink-0 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <div className="mt-0.5 flex items-center gap-1 truncate text-[11px] text-zinc-400">
+              <svg
+                className="h-3 w-3 shrink-0 text-zinc-500"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <path d="M9 18V5l12-2v13" />
                 <circle cx="6" cy="18" r="3" />
                 <circle cx="18" cy="16" r="3" />
@@ -64,7 +75,7 @@ export const LiveMonitor: React.FC<LiveMonitorProps> = ({ telemetry, metrics, th
         </div>
 
         {telemetry.caption && (
-          <p className="text-[11px] text-zinc-400 line-clamp-2 bg-zinc-950/40 p-2 rounded border border-zinc-850">
+          <p className="border-zinc-850 line-clamp-2 rounded border bg-zinc-950/40 p-2 text-[11px] text-zinc-400">
             {telemetry.caption}
           </p>
         )}
@@ -72,9 +83,11 @@ export const LiveMonitor: React.FC<LiveMonitorProps> = ({ telemetry, metrics, th
         {/* Confidence Meter */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-[11px]">
-            <span className="text-zinc-400 font-medium">Confidence Score</span>
+            <span className="font-medium text-zinc-400">Confidence Score</span>
             <div className="flex items-center gap-1.5">
-              <span className={`font-mono text-xs font-semibold ${isMatch ? 'text-indigo-400' : 'text-zinc-300'}`}>
+              <span
+                className={`font-mono text-xs font-semibold ${isMatch ? 'text-indigo-400' : 'text-zinc-300'}`}
+              >
                 {telemetry.score}%
               </span>
               <span className="text-[10px] text-zinc-500">
@@ -87,24 +100,28 @@ export const LiveMonitor: React.FC<LiveMonitorProps> = ({ telemetry, metrics, th
               className={`h-full transition-all duration-300 ${
                 isMatch ? 'bg-indigo-500' : 'bg-zinc-600'
               }`}
-              style={{ width: `${Math.min(100, Math.max(0, telemetry.score))}%` }}
+              style={{
+                width: `${Math.min(100, Math.max(0, telemetry.score))}%`,
+              }}
             />
           </div>
         </div>
 
         {/* Detected Tags */}
         <div className="space-y-1.5">
-          <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+          <span className="text-[10px] font-medium tracking-wider text-zinc-500 uppercase">
             Detected Tags
           </span>
-          <div className="flex flex-wrap gap-1 max-h-16 overflow-y-auto pr-1">
+          <div className="flex max-h-16 flex-wrap gap-1 overflow-y-auto pr-1">
             {telemetry.tags.length > 0 ? (
               telemetry.tags.map((tag) => {
-                const matched = telemetry.matchedTags.includes(tag.toLowerCase());
+                const matched = telemetry.matchedTags.includes(
+                  tag.toLowerCase()
+                );
                 return (
                   <span
                     key={tag}
-                    className={`inline-block rounded px-1.5 py-0.5 text-[10px] font-mono ${
+                    className={`inline-block rounded px-1.5 py-0.5 font-mono text-[10px] ${
                       matched
                         ? 'border border-indigo-500/40 bg-indigo-950/50 text-indigo-300'
                         : 'border border-zinc-800 bg-zinc-950 text-zinc-400'
@@ -115,7 +132,9 @@ export const LiveMonitor: React.FC<LiveMonitorProps> = ({ telemetry, metrics, th
                 );
               })
             ) : (
-              <span className="text-[11px] text-zinc-500 italic">No hashtags detected in current video</span>
+              <span className="text-[11px] text-zinc-500 italic">
+                No hashtags detected in current video
+              </span>
             )}
           </div>
         </div>
@@ -123,25 +142,25 @@ export const LiveMonitor: React.FC<LiveMonitorProps> = ({ telemetry, metrics, th
 
       {/* Metrics Row */}
       <div>
-        <h2 className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500 mb-2">
+        <h2 className="mb-2 text-[10px] font-semibold tracking-wider text-zinc-500 uppercase">
           Session Metrics
         </h2>
         <div className="grid grid-cols-3 gap-2">
           <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-2.5 text-center">
             <div className="text-[10px] text-zinc-400">Scrolled</div>
-            <div className="text-base font-bold font-mono text-zinc-100 mt-0.5">
+            <div className="mt-0.5 font-mono text-base font-bold text-zinc-100">
               {metrics.scrolledCount}
             </div>
           </div>
           <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-2.5 text-center">
             <div className="text-[10px] text-zinc-400">Auto-Liked</div>
-            <div className="text-base font-bold font-mono text-indigo-400 mt-0.5">
+            <div className="mt-0.5 font-mono text-base font-bold text-indigo-400">
               {metrics.likedCount}
             </div>
           </div>
           <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-2.5 text-center">
             <div className="text-[10px] text-zinc-400">Like Rate</div>
-            <div className="text-base font-bold font-mono text-zinc-200 mt-0.5">
+            <div className="mt-0.5 font-mono text-base font-bold text-zinc-200">
               {likeRate}%
             </div>
           </div>

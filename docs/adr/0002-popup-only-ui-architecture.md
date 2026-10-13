@@ -8,9 +8,10 @@ Accepted
 
 ## Context
 
-We need an interface for users to configure the Auto-Pilot settings (Auto-Like Baddies toggle, confidence threshold slider, scroll thresholds) and monitor real-time execution status (last evaluated video, classification score, action taken). 
+We need an interface for users to configure the Auto-Pilot settings (Auto-Like Baddies toggle, confidence threshold slider, scroll thresholds) and monitor real-time execution status (last evaluated video, classification score, action taken).
 
 We considered:
+
 1. In-page floating HUD widget / overlay injected into the active platform's DOM.
 2. Extension action popup (`popup.html`) exclusively.
 

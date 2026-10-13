@@ -7,14 +7,17 @@
 ## 1. Executive Summary & Wackathon Vision
 
 ### 1.1 The Concept
-Social media platforms are engineered to trap human thumbs in infinite dopamine loops. **Doomscroll Co-Pilot** satirizes and solves this dilemma by turning doomscrolling into an automated, hands-free utility. 
+
+Social media platforms are engineered to trap human thumbs in infinite dopamine loops. **Doomscroll Co-Pilot** satirizes and solves this dilemma by turning doomscrolling into an automated, hands-free utility.
 
 It autonomously scrolls through short-form video feeds, inspects each clip's metadata and tags in milliseconds, and executes simulated engagement actions:
+
 - **Auto-Liking**: Specifically triggers when content matches the **Baddie Target** criteria above a user-defined confidence threshold.
 - **Content-Aware Auto-Scrolling**: Implements a high-efficiency **Scroll Cadence**—watching full clips (up to a **Dwell Cap**) when matched, but executing an **Early Skip** within 2–3 seconds on non-matching or boring videos to optimize dopamine intake.
 - **Zero API Friction**: Operates 100% locally in-browser via DOM metadata inspection (avoiding CORS canvas corruption, external API keys, latency, or rate limits).
 
 ### 1.2 Target Platforms
+
 - **TikTok Web** (`https://www.tiktok.com/*`, `/foryou`)
 - **Instagram Reels** (`https://www.instagram.com/reels/*`)
 - **YouTube Shorts** (`https://www.youtube.com/shorts/*`)
@@ -24,6 +27,7 @@ It autonomously scrolls through short-form video feeds, inspects each clip's met
 ## 2. Technology Stack & Directory Architecture
 
 ### 2.1 Core Tooling
+
 - **Framework**: [WXT](https://wxt.dev/) (Next-Gen Web Extension Framework) targeting Manifest V3.
 - **UI Runtime**: React 18 / 19 + TypeScript.
 - **Package Manager**: `pnpm`.
@@ -31,6 +35,7 @@ It autonomously scrolls through short-form video feeds, inspects each clip's met
 - **Styling**: Modern dark-mode vanilla CSS with neon accents, custom sliders, and micro-animations.
 
 ### 2.2 Project Structure
+
 ```text
 wackathon/
 ├── CONTEXT.md                               # Domain vocabulary & ubiquitous language
@@ -78,6 +83,7 @@ wackathon/
 ## 3. Core Subsystems & Mechanics
 
 ### 3.1 Platform Adapters (`src/platforms/`)
+
 Each platform implements a standardized `PlatformAdapter` interface:
 
 ```typescript
@@ -100,18 +106,21 @@ export interface PlatformAdapter {
 ```
 
 #### Platform Selector Map
-| Platform | Active Container Selector | Video Element | Like Button Selector | Metadata / Tag Source | Scroll Action |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **TikTok** | `[data-e2e="recommend-list-item-container"]` or current viewport item | `video` | `[data-e2e="like-icon"]`, `[data-e2e="browse-like-icon"]` | `[data-e2e="browse-video-desc"]`, `h1[data-e2e="video-desc"]` | Keyboard `ArrowDown` / synthetic wheel |
-| **Instagram Reels** | `article`, `div[role="dialog"]`, or active viewport reel | `video` | `svg[aria-label="Like"]` (checks for filled vs outline) | Caption `span`, `h1`, hashtag links `a[href*="/explore/tags/"]` | Keyboard `ArrowDown` / container scroll |
-| **YouTube Shorts** | `ytd-reel-video-renderer[is-active]` | `video` | `ytd-like-button-renderer #like-button button` | `#title.ytd-reel-player-header-renderer`, `#description` | Keyboard `ArrowDown` / `j` key |
+
+| Platform            | Active Container Selector                                             | Video Element | Like Button Selector                                      | Metadata / Tag Source                                           | Scroll Action                           |
+| :------------------ | :-------------------------------------------------------------------- | :------------ | :-------------------------------------------------------- | :-------------------------------------------------------------- | :-------------------------------------- |
+| **TikTok**          | `[data-e2e="recommend-list-item-container"]` or current viewport item | `video`       | `[data-e2e="like-icon"]`, `[data-e2e="browse-like-icon"]` | `[data-e2e="browse-video-desc"]`, `h1[data-e2e="video-desc"]`   | Keyboard `ArrowDown` / synthetic wheel  |
+| **Instagram Reels** | `article`, `div[role="dialog"]`, or active viewport reel              | `video`       | `svg[aria-label="Like"]` (checks for filled vs outline)   | Caption `span`, `h1`, hashtag links `a[href*="/explore/tags/"]` | Keyboard `ArrowDown` / container scroll |
+| **YouTube Shorts**  | `ytd-reel-video-renderer[is-active]`                                  | `video`       | `ytd-like-button-renderer #like-button button`            | `#title.ytd-reel-player-header-renderer`, `#description`        | Keyboard `ArrowDown` / `j` key          |
 
 ---
 
 ### 3.2 The Evaluator Engine (`src/engine/evaluator.ts`)
+
 The Evaluator determines whether the current reel matches the **Baddie Target** by computing a normalized confidence score ($0.0 \le S \le 1.0$).
 
 #### Scoring Algorithm
+
 1. **Hashtag Normalization**: Convert all extracted tags to lowercase, stripping `#` and punctuation.
 2. **Weighted Dictionary Match**:
    - **Tier 1 (Core Baddie Indicators - Weight: 0.45 each)**:
@@ -135,23 +144,23 @@ The Evaluator determines whether the current reel matches the **Baddie Target** 
 stateDiagram-v2
     [*] --> VideoDetected: New Video in Viewport
     VideoDetected --> Evaluating: Extract Metadata (<5ms)
-    
+
     state Evaluating {
         [*] --> ComputeScore
         ComputeScore --> CheckThreshold: Score >= Threshold?
     }
-    
+
     CheckThreshold --> MatchFound: YES (Baddie Match)
     CheckThreshold --> Mismatch: NO (Boring / Non-Match)
-    
+
     MatchFound --> AutoLike: Auto-Like Enabled?
     AutoLike --> WatchingFull: Like Triggered ❤️
-    
+
     Mismatch --> EarlySkipTimer: Start Early Skip Timer (2.5s)
     EarlySkipTimer --> TriggerScroll: Timer Expired
-    
+
     WatchingFull --> TriggerScroll: Video Ended OR Dwell Cap Reached (15s)
-    
+
     TriggerScroll --> [*]: Advance to Next Reel
 ```
 
@@ -161,6 +170,7 @@ stateDiagram-v2
 ---
 
 ### 3.4 Brainrot Dashboard UI (`entrypoints/popup/`)
+
 The extension popup serves as the command center:
 
 1. **Header**: Glowing status pill (`ACTIVE` / `STANDBY`) + Platform badge (`TikTok`, `Instagram`, or `YouTube`).
@@ -192,7 +202,10 @@ Communication between the isolated **Content Script** and the **Popup / Backgrou
 export type ExtensionMessage =
   | { type: 'STATE_CHANGED'; payload: Partial<AutoPilotSettings> }
   | { type: 'CLIP_ANALYZED'; payload: ClipTelemetry }
-  | { type: 'METRICS_INCREMENT'; payload: { scrolled?: number; liked?: number } }
+  | {
+      type: 'METRICS_INCREMENT';
+      payload: { scrolled?: number; liked?: number };
+    }
   | { type: 'GET_CURRENT_STATUS' };
 
 export interface ClipTelemetry {
@@ -214,6 +227,7 @@ export interface ClipTelemetry {
 ## 5. Step-by-Step Implementation Roadmap
 
 ### Phase 1: Environment & Project Scaffolding
+
 - Initialize WXT template with React + TypeScript using `pnpm`:
   ```bash
   pnpm dlx create-wxt@latest . --template react
@@ -225,26 +239,36 @@ export interface ClipTelemetry {
   - Storage & scripting permissions.
 
 ### Phase 2: Domain Logic & Evaluation Engine
+
 - Implement `src/engine/defaultKeywords.ts` with weighted tag tables.
 - Implement `src/engine/evaluator.ts` scoring functions and unit tests.
 - Implement `src/types/state.ts` defining default settings and metrics.
 
 ### Phase 3: Platform Adapters & DOM Drivers
-- Implement `src/platforms/adapter.ts`.
-- Implement `src/platforms/tiktok.ts`:
+
+- [x] Implement `src/platforms/adapter.ts` / `src/types/platform.ts`.
+- [x] Implement `src/platforms/tiktok.ts`:
   - Test selectors for current video item, like button, caption text.
   - Test synthetic `KeyboardEvent('keydown', { key: 'ArrowDown', code: 'ArrowDown' })`.
-- Implement `src/platforms/instagram.ts`:
-  - Target Reels viewport containers and like SVGs.
-- Implement `src/platforms/youtube.ts`:
+- [x] Implement `src/platforms/youtube.ts`:
   - Target `ytd-reel-video-renderer[is-active]`.
+  - Extract creator handle, title, inline `#` tags, pre-rendered tags, and sound title.
+  - Detect sponsored ad cards (`ytd-ad-slot-renderer`, sponsored badges) for 0.5s fast-skipping.
+  - Safeguard user auth state before liking (prevents Google sign-in modal when logged out).
+  - Navigation hierarchy: native next button -> sibling `scrollIntoView` -> synthetic `ArrowDown` & `j` keypress.
+- [ ] Implement `src/platforms/instagram.ts`:
+  - Target Reels viewport containers and like SVGs.
 
 ### Phase 4: Cadence State Machine & Content Script Integration
-- Wire up video time listeners (`ended`, `timeupdate`) and mutation observers.
-- Integrate early-skip timeouts ($2.5\text{s}$) when score falls below threshold.
-- Integrate simulated like-button click when matched.
+
+- [x] Wire up video time listeners (`ended`, `timeupdate`) and mutation observers.
+- [x] Multi-platform unified content script router with SPA transition handling (`yt-navigate-finish`, `popstate`).
+- [x] Integrate early-skip timeouts ($2.5\text{s}$) when score falls below threshold.
+- [x] Integrate ad fast-skipping ($0.5\text{s}$) on sponsored short-form videos.
+- [x] Integrate simulated like-button click when matched.
 
 ### Phase 5: Popup Dashboard UI (React)
+
 - Create dark-mode cyberpunk aesthetic popup with custom toggle switches and sliders.
 - Build `TelemetryCard` displaying current video analysis in real time.
 - Build `KeywordEditor` for custom user tag additions.

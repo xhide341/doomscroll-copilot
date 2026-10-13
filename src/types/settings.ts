@@ -86,7 +86,8 @@ export const DEFAULT_TELEMETRY: TelemetryData = {
   platform: 'idle',
   creator: '@waiting_for_feed',
   sound: 'No active audio detected',
-  caption: 'Open TikTok, Instagram Reels, or YouTube Shorts to engage co-pilot.',
+  caption:
+    'Open TikTok, Instagram Reels, or YouTube Shorts to engage co-pilot.',
   tags: [],
   matchedTags: [],
   score: 0,
